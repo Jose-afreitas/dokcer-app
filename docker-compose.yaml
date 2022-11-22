@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+
+  dbapp:
+    image: mysql:5.7
+    command: --innodb-use-native-aio=0
+    container_name: dbapp
+    restart: always
+    tty: true
+    volumes:
+      - ./mysql:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456789
+    networks:
+      - app
+    ports:
+      - "3307:3306"
+      
+networks:
+  app:
+    driver: bridge
