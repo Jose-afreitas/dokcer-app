@@ -3,25 +3,66 @@ const express = require('express');
 const router = express.Router();
 const mysql = require('../config/mysql').pool;
 require('dotenv').config();
+const multer = require('multer');
 
+
+//tratamento de upload de imagem
+const storage = multer.diskStorage({
+  destination: function (req, file, callback) {
+    callback(null, './uploads');
+  },
+  filename: function (req, file, callback) {
+    callback(null, new Date().toISOString() + file.originalname);
+  }
+})
+
+const fileFilter = (req, file, callback) => {
+  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+    callback(null, true);
+  } else {
+    callback(null, false);
+  }
+}
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 1024 * 1024 * 5
+  },
+  fileFilter: fileFilter
+
+})
 
 
 // Inserindo um registro
-router.post('/', (req, res, next) => {
+router.post('/', upload.single('produto_imagem'), (req, res, next) => {
+  console.log(req.file, 'passando por aqui')
   mysql.getConnection((error, conn) => {
     if (error) { return res.status(500).send({ error: error }) }
+    console.log('Se passar o erro está para baixo')
     conn.query(
-      ' INSERT IGNORE INTO IF NOT exists produtos (nome, preco) VALUES (?,?);',
-      [req.body.nome, req.body.preco],
+      ' INSERT  INTO produtos (nome, preco, imagem_produto) VALUES (?,?,?)',
+      [
+        req.body.nome,
+        req.body.preco,
+        req.file.path
+
+      ],
       (error, result, field) => {
         conn.release();
+
         if (error) { return res.status(500).send({ error: error }) }
+        console.log('Se passar o erro está em cima')
         const response = {
           mensage: 'produto inserido com sucesso',
+
           produtoCriado: {
             id_produto: result.id_produto,
             nome: req.body.nome,
             preco: req.body.preco,
+            imagem_produto: req.file.path,
+
+
             request: {
               tipo: 'POST',
               descricao: 'Inserindo um registro',
@@ -52,12 +93,12 @@ router.get('/', (req, res, next) => {
                 id_produto: prod.id_produto,
                 nome: prod.nome,
                 preco: prod.preco,
+                imagem_produto: prod.imagem_produto,
                 Request: {
                   tipo: 'GET',
                   descricao: 'Retorna os detalhes de apenas um registro',
                   url: process.env.URL_GET_PRODUTOS + prod.id_produto
                 }
-
               }
             })
           }
@@ -127,7 +168,6 @@ router.patch('/', (req, res, next) => {
         return res.status(202).send(response);
       }
     );
-
   });
 });
 

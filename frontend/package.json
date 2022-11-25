@@ -7,5 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Jose Augusto",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "react-axios": "^2.0.6"
+  }
 }

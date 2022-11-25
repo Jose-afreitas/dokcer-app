@@ -119,7 +119,7 @@ router.get('/:id_pedido', (req, res, next) => {
         const response = {
           pedido: {
             id_pedido: result[0].id_pedido,
-            quantidade: result[0].quantidade,
+            quantidade_pedido: result[0].quantidade,
             produto: {
               id_produto: result[0].id_produto,
               nome: result[0].nome,
