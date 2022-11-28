@@ -6,6 +6,7 @@ require('dotenv').config();
 const multer = require('multer');
 
 
+
 //tratamento de upload de imagem
 const storage = multer.diskStorage({
   destination: function (req, file, callback) {
@@ -51,6 +52,7 @@ router.post('/', upload.single('produto_imagem'), (req, res, next) => {
       (error, result, field) => {
         conn.release();
 
+
         if (error) { return res.status(500).send({ error: error }) }
         console.log('Se passar o erro está em cima')
         const response = {
@@ -84,7 +86,7 @@ router.get('/', (req, res, next) => {
     conn.query
       ('SELECT * FROM ecommerce.produtos;',
         (error, result, fields) => {
-          // conn.release();
+          conn.release();
           if (error) { return res.status(500).send({ error: error }) }
           const response = {
             quantidade: result.length,
@@ -128,6 +130,7 @@ router.get('/:id_produto', (req, res, next) => {
             id_produto: result[0].id_produto,
             nome: result[0].nome,
             preco: result[0].preco,
+            imagem_produto: result[0].imagem_produto,
             request: {
               tipo: 'POST',
               descricao: 'retorna todos os registros',
@@ -147,8 +150,14 @@ router.patch('/', (req, res, next) => {
   mysql.getConnection((error, conn) => {
     if (error) { return res.status(500).send({ error: error }) }
     conn.query(
-      `UPDATE produtos SET nome = ?,preco = ? WHERE id_produto = ?`,
-      [req.body.nome, req.body.preco, req.body.id_produto],
+      `UPDATE produtos SET nome = ?,preco = ?,imagem_produto = ? WHERE id_produto = ?`,
+      [
+        req.body.nome,
+        req.body.preco,
+        req.file.path,
+        req.body.id_produto
+      ],
+
       (error, result, field) => {
         conn.release();
         if (error) { return res.status(500).send({ error: error }) }
@@ -158,6 +167,7 @@ router.patch('/', (req, res, next) => {
             id_produto: req.body.id_produto,
             nome: req.body.nome,
             preco: req.body.preco,
+
             request: {
               tipo: 'GET',
               descricao: 'Retorna os detalhes de um produto específico',
@@ -191,7 +201,6 @@ router.delete('/', (req, res, next) => {
             body: {
               nome: 'String',
               preco: 'Number'
-
             }
           }
         }
@@ -200,6 +209,7 @@ router.delete('/', (req, res, next) => {
     );
   });
 });
+
 
 
 
