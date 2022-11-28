@@ -36,25 +36,21 @@ const upload = multer({
 
 
 // Inserindo um registro
-router.post('/', upload.single('produto_imagem'), (req, res, next) => {
-  console.log(req.file, 'passando por aqui')
+router.post('/', upload.single('imagem_produto'), (req, res, next) => {
+  console.log("passando aqui", req.file);
   mysql.getConnection((error, conn) => {
     if (error) { return res.status(500).send({ error: error }) }
-    console.log('Se passar o erro está para baixo')
     conn.query(
       ' INSERT  INTO produtos (nome, preco, imagem_produto) VALUES (?,?,?)',
       [
         req.body.nome,
         req.body.preco,
-        req.file.path
-
+        req.file.path,
       ],
       (error, result, field) => {
         conn.release();
 
-
         if (error) { return res.status(500).send({ error: error }) }
-        console.log('Se passar o erro está em cima')
         const response = {
           mensage: 'produto inserido com sucesso',
 
@@ -146,7 +142,8 @@ router.get('/:id_produto', (req, res, next) => {
 
 
 //Editando registros
-router.patch('/', (req, res, next) => {
+router.patch('/', upload.single('imagem_produto'), (req, res, next) => {
+  console.log("passando", req.file)
   mysql.getConnection((error, conn) => {
     if (error) { return res.status(500).send({ error: error }) }
     conn.query(
@@ -167,6 +164,7 @@ router.patch('/', (req, res, next) => {
             id_produto: req.body.id_produto,
             nome: req.body.nome,
             preco: req.body.preco,
+            imagem_produto: req.file.path,
 
             request: {
               tipo: 'GET',
@@ -209,6 +207,56 @@ router.delete('/', (req, res, next) => {
     );
   });
 });
+
+
+
+
+
+
+
+
+
+
+// //Editando registros
+// router.patch('/', (req, res, next) => {
+//   mysql.getConnection((error, conn) => {
+//     if (error) { return res.status(500).send({ error: error }) }
+//     conn.query(
+//       `UPDATE produtos SET imagem_produto = ? WHERE id_produto = ?`,
+//       [
+//         req.body.id_produto,
+//         req.file.path,
+//       ],
+
+//       (error, result, field) => {
+//         conn.release();
+//         if (error) { return res.status(500).send({ error: error }) }
+//         const response = {
+//           mensage: 'produto Atualizado com sucesso',
+//           produtoAtualizado: {
+//             id_produto: req.body.id_produto,
+//            imagem_produto:req.file.path,
+
+//             request: {
+//               tipo: 'GET',
+//               descricao: 'Retorna os detalhes de um produto específico',
+//               url: process.env.URL_GET_PRODUTOS + req.body.id_produto
+//             }
+//           }
+//         }
+//         return res.status(202).send(response);
+//       }
+//     );
+//   });
+// });
+
+
+
+
+
+
+
+
 
 
 
