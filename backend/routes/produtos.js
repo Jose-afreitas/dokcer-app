@@ -4,6 +4,7 @@ const router = express.Router();
 const mysql = require('../config/mysql').pool;
 require('dotenv').config();
 const multer = require('multer');
+const login = require('../middleware/login')
 
 
 
@@ -36,16 +37,17 @@ const upload = multer({
 
 
 // Inserindo um registro
-router.post('/', upload.single('imagem_produto'), (req, res, next) => {
-  console.log("passando aqui", req.file);
+router.post('/', login.obrigatorio, upload.single('imagem_produto'), (req, res, next) => {
+  console.log('token usuario', req.usuario)
   mysql.getConnection((error, conn) => {
     if (error) { return res.status(500).send({ error: error }) }
     conn.query(
-      ' INSERT  INTO produtos (nome, preco, imagem_produto) VALUES (?,?,?)',
+      ' INSERT  INTO produtos (nome, preco, imagem_produto, id_usuario) VALUES (?,?,?,?)',
       [
         req.body.nome,
         req.body.preco,
         req.file.path,
+        req.usuario.id_usuario,
       ],
       (error, result, field) => {
         conn.release();
@@ -142,8 +144,7 @@ router.get('/:id_produto', (req, res, next) => {
 
 
 //Editando registros
-router.patch('/', upload.single('imagem_produto'), (req, res, next) => {
-  console.log("passando", req.file)
+router.patch('/', upload.single('imagem_produto'), login, (req, res, next) => {
   mysql.getConnection((error, conn) => {
     if (error) { return res.status(500).send({ error: error }) }
     conn.query(
@@ -165,7 +166,6 @@ router.patch('/', upload.single('imagem_produto'), (req, res, next) => {
             nome: req.body.nome,
             preco: req.body.preco,
             imagem_produto: req.file.path,
-
             request: {
               tipo: 'GET',
               descricao: 'Retorna os detalhes de um produto específico',
@@ -180,8 +180,9 @@ router.patch('/', upload.single('imagem_produto'), (req, res, next) => {
 });
 
 
+
 // Excluindo registros
-router.delete('/', (req, res, next) => {
+router.delete('/', login, (req, res, next) => {
   mysql.getConnection((error, conn) => {
     if (error) { return res.status(500).send({ error: error }) }
     conn.query(
@@ -208,47 +209,6 @@ router.delete('/', (req, res, next) => {
   });
 });
 
-
-
-
-
-
-
-
-
-
-// //Editando registros
-// router.patch('/', (req, res, next) => {
-//   mysql.getConnection((error, conn) => {
-//     if (error) { return res.status(500).send({ error: error }) }
-//     conn.query(
-//       `UPDATE produtos SET imagem_produto = ? WHERE id_produto = ?`,
-//       [
-//         req.body.id_produto,
-//         req.file.path,
-//       ],
-
-//       (error, result, field) => {
-//         conn.release();
-//         if (error) { return res.status(500).send({ error: error }) }
-//         const response = {
-//           mensage: 'produto Atualizado com sucesso',
-//           produtoAtualizado: {
-//             id_produto: req.body.id_produto,
-//            imagem_produto:req.file.path,
-
-//             request: {
-//               tipo: 'GET',
-//               descricao: 'Retorna os detalhes de um produto específico',
-//               url: process.env.URL_GET_PRODUTOS + req.body.id_produto
-//             }
-//           }
-//         }
-//         return res.status(202).send(response);
-//       }
-//     );
-//   });
-// });
 
 
 
