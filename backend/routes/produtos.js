@@ -5,6 +5,7 @@ const mysql = require('../config/mysql').pool;
 require('dotenv').config();
 const multer = require('multer');
 const login = require('../middleware/login')
+const ControleProduto = require('../controllers/ControleProdutos')
 
 
 
@@ -52,6 +53,7 @@ router.post('/', login.obrigatorio, upload.single('imagem_produto'), (req, res, 
         conn.release();
 
         if (error) { return res.status(500).send({ error: error }) }
+        // upload.single('imagem_produto')
         const response = {
           mensage: 'produto inserido com sucesso',
 
@@ -178,33 +180,8 @@ router.patch('/', login.obrigatorio, upload.single('imagem_produto'), (req, res,
 
 
 
-// Excluindo registros
-router.delete('/', login.obrigatorio, (req, res, next) => {
-  mysql.getConnection((error, conn) => {
-    if (error) { return res.status(500).send({ error: error }) }
-    conn.query(
-      `DELETE FROM produtos WHERE id_produto = ?`,
-      [req.body.id_produto],
-      (error, result, field) => {
-        conn.release();
-        if (error) { return res.status(500).send({ error: error }) }
-        const response = {
-          message: 'Registro removido com sucesso',
-          request: {
-            tipo: 'POST',
-            descrocao: 'insere um registro',
-            url: process.env.URL_POST_PRODUTOS,
-            body: {
-              nome: 'String',
-              preco: 'Number'
-            }
-          }
-        }
-        return res.status(202).send(response);
-      }
-    );
-  });
-});
+
+router.delete('/', login.obrigatorio, ControleProduto.deleteProduto);
 
 
 
