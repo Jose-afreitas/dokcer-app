@@ -66,12 +66,15 @@ router.post('/login', (req, res, next) => {
           },
             process.env.JWT_KEY,
             {
-              expiresIn: "1h"
+              expiresIn: "6h"
             });
+          console.log("token: ", token);
           return res.status(200).send({
             message: 'Autenticado com sucesso',
             token: token
+
           });
+
         }
         return res.status(401).send({ message: 'Falha na autenticação' })
       });

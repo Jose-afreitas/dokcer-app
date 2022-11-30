@@ -42,12 +42,11 @@ router.post('/', login.obrigatorio, upload.single('imagem_produto'), (req, res, 
   mysql.getConnection((error, conn) => {
     if (error) { return res.status(500).send({ error: error }) }
     conn.query(
-      ' INSERT  INTO produtos (nome, preco, imagem_produto, id_usuario) VALUES (?,?,?,?)',
+      ' INSERT  INTO produtos (nome, preco, imagem_produto) VALUES (?,?,?)',
       [
         req.body.nome,
         req.body.preco,
         req.file.path,
-        req.usuario.id_usuario,
       ],
       (error, result, field) => {
         conn.release();
@@ -61,8 +60,6 @@ router.post('/', login.obrigatorio, upload.single('imagem_produto'), (req, res, 
             nome: req.body.nome,
             preco: req.body.preco,
             imagem_produto: req.file.path,
-
-
             request: {
               tipo: 'POST',
               descricao: 'Inserindo um registro',
@@ -144,7 +141,7 @@ router.get('/:id_produto', (req, res, next) => {
 
 
 //Editando registros
-router.patch('/', upload.single('imagem_produto'), login, (req, res, next) => {
+router.patch('/', login.obrigatorio, upload.single('imagem_produto'), (req, res, next) => {
   mysql.getConnection((error, conn) => {
     if (error) { return res.status(500).send({ error: error }) }
     conn.query(
@@ -182,7 +179,7 @@ router.patch('/', upload.single('imagem_produto'), login, (req, res, next) => {
 
 
 // Excluindo registros
-router.delete('/', login, (req, res, next) => {
+router.delete('/', login.obrigatorio, (req, res, next) => {
   mysql.getConnection((error, conn) => {
     if (error) { return res.status(500).send({ error: error }) }
     conn.query(
