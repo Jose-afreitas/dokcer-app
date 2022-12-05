@@ -72,9 +72,7 @@ exports.postLogin = (req, res, next) => {
           return res.status(200).send({
             message: 'Autenticado com sucesso',
             token: token
-
           });
-
         }
         return res.status(401).send({ message: 'Falha na autenticação' })
       });

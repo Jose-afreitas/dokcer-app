@@ -8,5 +8,4 @@ router.post('/cadastro', ControleUsuarios.postusuarios);
 router.post('/login', ControleUsuarios.postLogin);
 
 
-
 module.exports = router;
