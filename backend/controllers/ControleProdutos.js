@@ -141,8 +141,6 @@ exports.patchProdutos = async (req, res) => {
   }
 }
 
-
-
 exports.deleteProduto = async (req, res) => {
   try {
     const queryverification = 'SELECT * FROM produtos WHERE id_produto = ?;';

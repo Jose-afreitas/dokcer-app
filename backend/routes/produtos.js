@@ -1,7 +1,6 @@
 const { request, response } = require('express');
 const express = require('express');
 const router = express.Router();
-// const mysql = require('../config/mysql').pool;
 require('dotenv').config();
 const multer = require('multer');
 const login = require('../middleware/login')
