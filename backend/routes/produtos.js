@@ -14,7 +14,8 @@ const storage = multer.diskStorage({
     callback(null, './uploads');
   },
   filename: function (req, file, callback) {
-    callback(null, new Date().toISOString() + file.originalname);
+    callback(null, file.originalname);
+    // new Date().toISOString() +
   }
 })
 
@@ -41,6 +42,9 @@ router.get('/', ControleProduto.getProdutos);
 router.get('/:id_produto', ControleProduto.getProdutoUnico)
 router.patch('/', login.obrigatorio, upload.single('imagem_produto'), ControleProduto.patchProdutos);
 router.delete('/', login.obrigatorio, ControleProduto.deleteProduto);
+
+router.post('/:id_produto/imagem', login.obrigatorio, upload.single('imagem_produto'), ControleProduto.postImagem);
+router.get('/:id_produto/imagens', ControleProduto.getImagems)
 
 
 module.exports = router;

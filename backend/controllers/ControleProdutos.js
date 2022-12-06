@@ -174,3 +174,66 @@ exports.deleteProduto = async (req, res) => {
     return res.status(500).send({ error: error });
   }
 }
+
+
+
+
+
+
+exports.postImagem = async (req, res) => {
+  try {
+    const queryverification = 'SELECT * FROM ecommerce.imagens_produtos WHERE caminho  = ?;';
+    const result = await mysql.execute(queryverification, [
+      req.file.path,
+    ]);
+
+    if (result.length == 1) {
+      return res.status(404).send({
+        message: 'Já existe um produto com essa Imagem!'
+      })
+    }
+    const query = ' INSERT INTO ecommerce.imagens_produtos (id_produto, caminho) VALUES (?,?);';
+    await mysql.execute(query, [
+      req.params.id_produto,
+      req.file.path
+    ]);
+
+    const response = {
+      mensage: 'Imagem Inserida com sucesso',
+      imagemCriada: {
+        id_produto: req.params.id_produto,
+        id_imagem: result.id_imagem,
+        imagem_produto: req.file.path,
+        // request: {
+        //   tipo: 'POST',
+        //   descricao: 'Inserindo um registro',
+        //   url: process.env.URL_POST_PRODUTOS
+        // }
+      }
+    }
+    return res.status(201).send(response);
+  } catch (error) {
+    return res.status(500).send({ error: error })
+  }
+}
+
+
+exports.getImagems = async (req, res) => {
+  try {
+    const query = 'SELECT * FROM ecommerce.imagens_produtos WHERE id_produto = ?;';
+    const result = await mysql.execute(query, [req.params.id_produto]);
+    const response = {
+      quantidade: result.length,
+      imagens: result.map(img => {
+        return {
+          id_produto: parseInt(req.params.id_produto),
+          id_imagem: img.id_imagem,
+          caminho: img.caminho
+        }
+      })
+    }
+    return res.status(200).send(response)
+  } catch (error) {
+    return res.status(500).send({ error: error })
+  }
+}
