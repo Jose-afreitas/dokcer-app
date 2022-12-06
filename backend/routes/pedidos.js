@@ -1,7 +1,7 @@
 const { request, respose } = require('express');
 const express = require('express');
 const router = express.Router();
-const mysql = require('../config/mysql').pool;
+const mysql = require('../config/mysql');
 const ControlePedido = require('../controllers/ControlePedidos')
 
 

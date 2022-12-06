@@ -33,20 +33,15 @@ const upload = multer({
     fileSize: 1024 * 1024 * 5
   },
   fileFilter: fileFilter
-
 })
 
 
 
-
-
-
-// router.post('/', login.obrigatorio, upload.single('imagem_produto'), ControleProduto.postProdutos);
-
+router.post('/', login.obrigatorio, upload.single('imagem_produto'), ControleProduto.postProdutos);
 router.get('/', ControleProduto.getProdutos);
 router.get('/:id_produto', ControleProduto.getProdutoUnico)
 router.patch('/', login.obrigatorio, upload.single('imagem_produto'), ControleProduto.patchProdutos);
-// router.delete('/', login.obrigatorio, ControleProduto.deleteProduto);
+router.delete('/', login.obrigatorio, ControleProduto.deleteProduto);
 
 
 module.exports = router;
