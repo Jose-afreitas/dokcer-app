@@ -1,10 +1,10 @@
 const { request, response } = require('express');
 const express = require('express');
 const router = express.Router();
-require('dotenv').config();
+// require('dotenv').config();
 const multer = require('multer');
 const login = require('../middleware/login')
-const ControleProduto = require('../controllers/ControleProdutos')
+const ControllersProducts = require('../controllers/ControllerProducts')
 
 
 
@@ -37,14 +37,17 @@ const upload = multer({
 
 
 
-router.post('/', login.obrigatorio, upload.single('imagem_produto'), ControleProduto.postProdutos);
-router.get('/', ControleProduto.getProdutos);
-router.get('/:id_produto', ControleProduto.getProdutoUnico)
-router.patch('/', login.obrigatorio, upload.single('imagem_produto'), ControleProduto.patchProdutos);
-router.delete('/', login.obrigatorio, ControleProduto.deleteProduto);
+router.post('/', login.mandatory, upload.single('productImage'), ControllersProducts.postProducts);
+router.get('/', ControllersProducts.getProducts);
+router.get('/:productId', ControllersProducts.getProductUnique)
+router.patch('/', login.mandatory, upload.single('productImage'), ControllersProducts.patchProduct);
+router.delete('/', login.mandatory, ControllersProducts.deleteProduct);
 
-router.post('/:id_produto/imagem', login.obrigatorio, upload.single('imagem_produto'), ControleProduto.postImagem);
-router.get('/:id_produto/imagens', ControleProduto.getImagems)
+
+
+// router.post('/:id_produto/imagem', login.mandatory, upload.single('productImage'), ControleProducts.postImagem);
+// router.get('/:id_produto/imagens', ControleProducts.getImagems)
+
 
 
 module.exports = router;

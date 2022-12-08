@@ -3,9 +3,10 @@ const cors = require('cors')
 const app = express();
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
-const rotaProdutos = require('./routes/produtos')
-const rotaPedidos = require('./routes/pedidos')
-const rotaUsuarios = require('./routes/usuarios');
+const routeProducts = require('./routes/products')
+const routeOrders = require('./routes/orders')
+const routeUsers = require('./routes/users');
+const rotaImagens = require('./routes/imagens');
 
 
 app.use(cors());
@@ -25,13 +26,14 @@ app.use((req, res, next) => {
 app.use('/uploads', express.static('uploads'))
 app.use(morgan('dev'));
 
-app.use('/produtos', rotaProdutos);
-app.use('/pedidos', rotaPedidos);
-app.use('/usuarios', rotaUsuarios);
+app.use('/produtos', routeProducts);
+app.use('/pedidos', routeOrders);
+app.use('/usuarios', routeUsers);
+app.use('/imagens', rotaImagens);
 
 //Quando não encontra a rota
 app.use((req, res, next) => {
-    const erro = new Error("Não encontrado");
+    const erro = new Error("Not found");
     erro.status = 404
     next(erro);
 });
