@@ -44,13 +44,13 @@ exports.postOrders = async (req, res) => {
 exports.getOrders = async (req, res, next) => {
   try {
     const result = await mysql.execute(`
-            SELECT ped.orderId, ped.quantity, prod.name, prod.price
+            SELECT ped.orderId, ped.quantity, prod.name, prod.price, prod.productId
               FROM ecommerce.products as prod 
               JOIN ecommerce.orders as ped 
                 ON prod.productId = ped.productId;`
     )
     const response = {
-      quantity: result.length,
+      quantityOrders: result.length,
       order: result.map(order => {
         return {
           orderId: order.orderId,
@@ -133,7 +133,7 @@ exports.patchOrder = async (req, res) => {
       req.body.productId, req.body.quantity, req.body.orderId
     ]);
     const response = {
-      message: 'Registro Atualizado com Sucesso',
+      message: 'Record updated successfully!',
       orderUpdated: {
         orderId: req.body.orderId,
         id_produto: req.body.id_produto,
@@ -154,26 +154,26 @@ exports.patchOrder = async (req, res) => {
 
 
 
-exports.deletePedido = async (req, res) => {
+exports.deleteOrder = async (req, res) => {
   try {
-    const queryverification = 'SELECT * FROM ecommerce.pedidos WHERE orderId =?;';
-    const result = await mysql.execute(queryverification, [req.body.orderId]);
+    const verification = 'SELECT * FROM ecommerce.orders WHERE orderId =?;';
+    const result = await mysql.execute(verification, [req.body.orderId]);
 
     if (result.length == 0) {
       return res.status(404).send({
-        message: 'Não possui Pedido registrado com esse ID'
+        message: 'No record was found with the given ID'
       })
     }
 
-    const query = 'DELETE FROM ecommerce.pedidos WHERE orderId = ?;';
+    const query = 'DELETE FROM ecommerce.orders WHERE orderId = ?;';
     await mysql.execute(query, [req.body.orderId]);
 
     const response = {
-      message: 'Registro Excluido com sucesso',
+      message: 'Record deleted successfuly',
       request: {
         type: 'POST',
-        description: 'Insere um registro',
-        url: process.env.URL_POST_PEDIDOS,
+        description: 'Insert a record',
+        url: process.env.URL_POST_ORDERS,
         body: {
           id_produto: 'number',
           quantity: 'Number'

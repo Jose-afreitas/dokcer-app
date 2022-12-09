@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const routeProducts = require('./routes/products')
 const routeOrders = require('./routes/orders')
 const routeUsers = require('./routes/users');
-const rotaImagens = require('./routes/imagens');
+const routeImage = require('./routes/images');
 
 
 app.use(cors());
@@ -29,7 +29,7 @@ app.use(morgan('dev'));
 app.use('/produtos', routeProducts);
 app.use('/pedidos', routeOrders);
 app.use('/usuarios', routeUsers);
-app.use('/imagens', rotaImagens);
+app.use('/imagens', routeImage);
 
 //Quando não encontra a rota
 app.use((req, res, next) => {

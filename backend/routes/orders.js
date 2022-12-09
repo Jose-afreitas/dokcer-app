@@ -10,7 +10,7 @@ router.post('/', login.mandatory, ControlleOrders.postOrders);
 router.get('/', ControlleOrders.getOrders);
 router.get('/:orderId', ControlleOrders.getOrderUnique)
 router.patch('/', login.mandatory, ControlleOrders.patchOrder)
-// router.delete('/', login.mandatory, ControlleOrders.deleteOrder)
+router.delete('/', login.mandatory, ControlleOrders.deleteOrder)
 
 
 module.exports = router;

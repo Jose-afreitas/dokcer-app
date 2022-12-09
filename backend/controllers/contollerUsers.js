@@ -4,19 +4,18 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
 
 
+
 exports.postUsers = (req, res, next) => {
   mysql.getConnection((err, conn) => {
     if (err) { return res.status(500).send({ error: error }) }
-    //conferindo se já possui o registro no banco
     conn.query(
       'SELECT * FROM ecommerce.users WHERE email = ?',
       [req.body.email],
       (error, results) => {
         if (error) { return res.status(500).send({ error: error }) }
         if (results.length > 0) {
-          res.status(409).send({ message: 'Usuário já cadastrado' })
+          res.status(409).send({ message: 'User already registered' })
         }
-        //Se não possuir registro então cadastre
         else {
           bcrypt.hash(req.body.password, 10, (errBcrypt, hash) => {
             if (errBcrypt) { return res.status(500).send({ error: errBcrypt }) }
@@ -27,7 +26,7 @@ exports.postUsers = (req, res, next) => {
                 conn.release();
                 if (error) { return res.status(500).send({ error: error }) }
                 response = {
-                  message: "Usuário cadastrado com sucesso!",
+                  message: "Successfuly registred user !",
                   usuarioCriado: {
                     userId: results.insertId,
                     email: req.body.email

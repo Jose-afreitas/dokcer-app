@@ -89,7 +89,10 @@ exports.getProductUnique = async (req, res) => {
         request: {
           type: 'GET',
           description: 'Returns all records',
-          url: process.env.URL_GET_PRODUCTS
+          url: process.env.URL_GET_PRODUCTS,
+          productImage: {
+            url: process.env.URL_GET_IMAGE + 'produtos/' + req.params.productId + '/imagens'
+          }
         }
       }
     }
@@ -98,7 +101,6 @@ exports.getProductUnique = async (req, res) => {
     return res.status(500).send({ error: error });
   }
 };
-
 
 
 exports.patchProduct = async (req, res) => {
@@ -127,7 +129,7 @@ exports.patchProduct = async (req, res) => {
         request: {
           type: 'GET',
           description: 'Returns all details of a record',
-          url: process.env.URL_GET_PRODUCTS + req.body.productId
+          url: process.env.URL_GET_PRODUCTS + req.body.productId,
         }
       }
     }
@@ -137,6 +139,7 @@ exports.patchProduct = async (req, res) => {
     return res.status(500).send({ error: error });
   }
 }
+
 
 exports.deleteProduct = async (req, res) => {
   try {
@@ -173,41 +176,37 @@ exports.deleteProduct = async (req, res) => {
 }
 
 
+/*==========================inserting images=========================================*/
 
-
-
-
-
-
-
-exports.postImagem = async (req, res) => {
+exports.postImage = async (req, res) => {
   try {
-    const queryverification = 'SELECT * FROM ecommerce.imagens_produtos WHERE caminho  = ?;';
-    const result = await mysql.execute(queryverification, [
-      req.file.path,
+    const verification = 'SELECT * FROM ecommerce.productImage WHERE path  = ?;';
+    const result = await mysql.execute(verification, [
+      req.file.path
     ]);
 
     if (result.length == 1) {
       return res.status(404).send({
-        message: 'Já existe um produto com essa Imagem!'
+        message: 'An image with that name already exists!'
       })
     }
-    const query = ' INSERT INTO ecommerce.imagens_produtos (id_produto, caminho) VALUES (?,?);';
+    const query = ' INSERT INTO ecommerce.productImage (productId, path) VALUES (?,?);';
     const results = await mysql.execute(query, [
-      req.params.id_produto,
+      req.params.productId,
       req.file.path
     ]);
 
+
     const response = {
-      mensage: 'Imagem Inserida com sucesso',
-      imagemCriada: {
-        id_produto: parseInt(req.params.id_produto),
-        id_imagem: results.insertId,
-        imagem_produto: req.file.path,
+      mensage: 'Image inserted successfully!',
+      createdImage: {
+        productId: parseInt(req.params.productId),
+        imageId: results.insertId,
+        productImage: req.file.path,
         request: {
           type: 'GET',
-          description: 'Retorna todas as imagens',
-          url: process.env.URL_GET_IMAGENS + 'produtos/' + req.params.id_produto + '/imagens'
+          description: 'returns all images for this product!',
+          url: process.env.URL_GET_IMAGE + 'produtos/' + req.params.productId + '/imagens'
         }
       }
     }
@@ -218,21 +217,17 @@ exports.postImagem = async (req, res) => {
 }
 
 
-
-
-
-
-exports.getImagems = async (req, res) => {
+exports.getImage = async (req, res) => {
   try {
-    const query = 'SELECT * FROM ecommerce.imagens_produtos WHERE id_produto = ?;';
-    const result = await mysql.execute(query, [req.params.id_produto]);
+    const query = 'SELECT * FROM ecommerce.productImage WHERE productId = ?;';
+    const result = await mysql.execute(query, [req.params.productId]);
     const response = {
       quantidade: result.length,
       imagens: result.map(img => {
         return {
-          id_produto: parseInt(req.params.id_produto),
-          id_imagem: img.id_imagem,
-          caminho: process.env.URL_GET_IMAGENS + img.caminho
+          productId: parseInt(req.params.productId),
+          imageId: img.imageId,
+          path: process.env.URL_GET_IMAGE + img.path
         }
       })
     }

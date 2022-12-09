@@ -45,8 +45,8 @@ router.delete('/', login.mandatory, ControllersProducts.deleteProduct);
 
 
 
-// router.post('/:id_produto/imagem', login.mandatory, upload.single('productImage'), ControleProducts.postImagem);
-// router.get('/:id_produto/imagens', ControleProducts.getImagems)
+router.post('/:productId/imagem', login.mandatory, upload.single('productImage'), ControllersProducts.postImage);
+router.get('/:productId/imagens', ControllersProducts.getImage)
 
 
 
