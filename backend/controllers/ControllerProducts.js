@@ -14,11 +14,12 @@ exports.postProducts = async (req, res) => {
         message: 'You already have a file with that name!'
       })
     }
-    const query = ' INSERT  INTO ecommerce.products (name, price, productImage) VALUES (?,?,?);';
+    const query = ' INSERT  INTO ecommerce.products (name, price, productImage, categoryId) VALUES (?,?,?,?);';
     await mysql.execute(query, [
       req.body.name,
       req.body.price,
-      req.file.path
+      req.file.path,
+      req.body.categoryId
     ]);
 
     const response = {
@@ -28,6 +29,7 @@ exports.postProducts = async (req, res) => {
         name: req.body.name,
         price: req.body.price,
         productImage: req.file.path,
+        categoryId: req.body.categoryId,
         request: {
           type: 'POST',
           description: 'inserting a record',
@@ -54,6 +56,7 @@ exports.getProducts = async (req, res) => {
           name: prod.name,
           price: prod.price,
           productImage: prod.productImage,
+          categoryId: prod.categoryId,
           request: {
             type: "GET",
             description: 'Returns all details of a record',
@@ -86,6 +89,7 @@ exports.getProductUnique = async (req, res) => {
         name: result[0].name,
         price: result[0].price,
         productImage: result[0].productImage,
+        categoryId: result[0].categoryId,
         request: {
           type: 'GET',
           description: 'Returns all records',
@@ -112,12 +116,13 @@ exports.patchProduct = async (req, res) => {
         message: 'No record was found with the given ID'
       })
     }
-    const query = 'UPDATE products SET name = ?,price = ?,productImage = ? WHERE productId = ?;';
+    const query = 'UPDATE products SET name = ?,price = ?,productImage = ?, categoryId =? WHERE productId = ?;';
     await mysql.execute(query, [
       req.body.name,
       req.body.price,
       req.file.path,
-      req.body.productId
+      req.body.productId,
+      req.body.categoryId
     ]);
     const response = {
       mensage: 'Product updated successfully',
@@ -126,6 +131,7 @@ exports.patchProduct = async (req, res) => {
         name: req.body.name,
         price: req.body.price,
         productImage: req.file.path,
+        categoryId: req.body.categoryId,
         request: {
           type: 'GET',
           description: 'Returns all details of a record',

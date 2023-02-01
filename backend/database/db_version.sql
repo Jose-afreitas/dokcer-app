@@ -55,3 +55,25 @@ productId INT,
 path VARCHAR(255),
 FOREIGN KEY (productId) REFERENCES products (productId)
 );
+
+--- 27/12/2022
+
+CREATE TABLE IF NOT EXISTS categories(
+  categoryId INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  nome VARCHAR(100)
+);
+
+ALTER TABLE products ADD categoryId INT NULL;
+
+INSERT INTO categories (name) VALUES('Bolos');
+
+UPDATE products SET categoryId = 1;
+
+ALTER TABLE products MODIFY categoryId INT NOT NULL;
+
+ALTER TABLE products ADD CONSTRAINT fk_products_category 
+FOREIGN KEY(categoryId) REFERENCES categories(categoryId);
+
+
+-- ALTER TABLE products DROP FOREIGN KEY fk_products_category;
+
